@@ -1,12 +1,9 @@
 import * as React from "react"
 import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
-import styled from "styled-components"
 
 import Navbar from "./navbar"
 import "./layout.scss"
-
-const Wrapper = styled.div``
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
-import { Button, Modal } from "react-bootstrap"
+import { Button, Modal, InputGroup, FormControl } from "react-bootstrap"
 import styled from "styled-components"
 
 import Layout from "../components/layout"
@@ -53,32 +51,25 @@ const SaveButton = styled(Button)`
   margin: 0px 10px;
 `
 
-const data = [
-  {
-    id: "123",
-    name: "Pushups",
-    value: 20,
-  },
-  {
-    id: "456",
-    name: "Pullups",
-    value: 10,
-  },
-]
-
 const IndexPage = () => {
   const [workouts, setWorkouts] = useState([])
+  const [reps, setReps] = useState([])
   const [selectedWorkout, setSelectedWorkout] = useState({})
   const [isModalDisplayed, setIsModalDisplayed] = useState(false)
   const [repsBeingAdded, setRepsBeingAdded] = useState(10)
+  const [isAddingWorkout, setIsAddingWorkout] = useState(false)
+  const [workoutBeingAdded, setWorkoutBeingAdded] = useState("")
 
   useEffect(() => {
     async function init() {
       // get workouts
-      let res = await fetch("/.netlify/functions/list-workouts")
+      let res = await fetch("/.netlify/functions/workouts")
       let json = await res.json()
-      console.log(json)
       setWorkouts(json)
+
+      let res2 = await fetch("/.netlify/functions/reps")
+      let json2 = await res2.json()
+      setReps(json2)
     }
     init()
   }, [])
@@ -94,31 +85,78 @@ const IndexPage = () => {
     setIsModalDisplayed(false)
   }
 
-  function save() {
-    // TODO: save to API
+  async function save() {
+    let count = Number(repsBeingAdded)
+    let newreps = {
+      workout: selectedWorkout.id,
+      count,
+    }
+    let res = await fetch("/.netlify/functions/reps", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newreps),
+    })
+    let created = await res.json()
+    let _reps = reps
+    reps.push(created)
+    setReps(_reps)
     onHideModal()
   }
 
-  async function listWorkouts() {
-    let res = await fetch("/.netlify/functions/list-workouts")
-    return await res.json()
+  function onHideAddWorkoutModal() {
+    setWorkoutBeingAdded("")
+    setIsAddingWorkout(false)
+  }
+
+  async function saveNewWorkout() {
+    let body = {
+      name: workoutBeingAdded,
+    }
+
+    let res = await fetch("/.netlify/functions/workouts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+    let newWorkout = await res.json()
+    console.log(newWorkout)
+
+    let _workouts = workouts
+    workouts.push(newWorkout)
+    setWorkouts(_workouts)
+
+    onHideAddWorkoutModal()
+  }
+
+  function getRepsForWorkout(workoutId) {
+    let arr = reps.filter(el => el.workout === workoutId)
+    if (arr.length > 0) {
+      let count = 0
+      arr.forEach(r => (count += r.count))
+      return count
+    }
   }
 
   return (
     <Layout>
       <Section className="container">
         <div className="row">
-          {/*
-            - List out each workout with the reps that have been done that day so far
-            - Tapping the button will open a modal to log more reps
-            - Saving it will aggregate it with the same thing
-          */}
-          {data.map((el, idx) => (
+          {workouts.map((el, idx) => (
             <MyButton key={idx} onClick={() => openDialog(el)}>
               <span>{el.name}</span>
-              <span>{el.value}</span>
+              {getRepsForWorkout(el.id) > 0 && (
+                <span>{getRepsForWorkout(el.id)}</span>
+              )}
             </MyButton>
           ))}
+          <hr />
+          <MyButton onClick={() => setIsAddingWorkout(true)}>
+            Add Workout
+          </MyButton>
         </div>
       </Section>
 
@@ -157,6 +195,22 @@ const IndexPage = () => {
             <hr />
             <SaveButton onClick={() => save()}>Save</SaveButton>
           </AddRepsWrapper>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={isAddingWorkout} fullscreen onHide={onHideAddWorkoutModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Workout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <InputGroup>
+            <InputGroup.Text>Name</InputGroup.Text>
+            <FormControl
+              value={workoutBeingAdded}
+              onChange={e => setWorkoutBeingAdded(e.target.value)}
+            />
+          </InputGroup>
+          <Button onClick={() => saveNewWorkout()}>Save New Workout</Button>
         </Modal.Body>
       </Modal>
     </Layout>
