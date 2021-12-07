@@ -39,6 +39,7 @@
   ],
   "license": "0BSD",
   "scripts": {
+    "dev": "netlify env:import .env&&netlify dev",
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
