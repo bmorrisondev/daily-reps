@@ -2,5 +2,12 @@
 $primary: #663399;
 @import "~bootstrap/scss/bootstrap";
 
+.container {
+  margin: none !important;
+}
+
+.row {
+  max-width: 100% !important
+}
 
 
