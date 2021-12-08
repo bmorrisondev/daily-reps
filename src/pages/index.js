@@ -40,11 +40,11 @@ const IncrementerRow = styled.div`
 
 const QuickValuesWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+`
 
-  button {
-    margin: 10px;
-  }
+const QuickValueButton = styled(Button)`
+  margin: 10px;
+  flex: 1;
 `
 
 const SaveButton = styled(Button)`
@@ -181,19 +181,59 @@ const IndexPage = () => {
                 +1
               </Button>
             </IncrementerRow>
+            <IncrementerRow className="mt-3">
+              <Button
+                onClick={() => setRepsBeingAdded(repsBeingAdded - 5)}
+                disabled={repsBeingAdded < 5}
+              >
+                -5
+              </Button>
+              <Button onClick={() => setRepsBeingAdded(repsBeingAdded + 5)}>
+                +5
+              </Button>
+            </IncrementerRow>
             <div className="col-md-12 text-center mt-3">
               <b>Quick Values</b>
             </div>
             <QuickValuesWrapper>
-              <Button onClick={() => setRepsBeingAdded(10)}>10</Button>
-              <Button onClick={() => setRepsBeingAdded(20)}>20</Button>
-              <Button onClick={() => setRepsBeingAdded(30)}>30</Button>
-              <Button onClick={() => setRepsBeingAdded(40)}>40</Button>
-              <Button onClick={() => setRepsBeingAdded(60)}>60</Button>
-              <Button onClick={() => setRepsBeingAdded(70)}>70</Button>
-              <Button onClick={() => setRepsBeingAdded(80)}>80</Button>
-              <Button onClick={() => setRepsBeingAdded(90)}>90</Button>
-              <Button onClick={() => setRepsBeingAdded(100)}>100</Button>
+              <QuickValueButton onClick={() => setRepsBeingAdded(10)}>
+                10
+              </QuickValueButton>
+              <QuickValueButton onClick={() => setRepsBeingAdded(20)}>
+                20
+              </QuickValueButton>
+            </QuickValuesWrapper>
+            <QuickValuesWrapper>
+              <QuickValueButton onClick={() => setRepsBeingAdded(30)}>
+                30
+              </QuickValueButton>
+              <QuickValueButton onClick={() => setRepsBeingAdded(40)}>
+                40
+              </QuickValueButton>
+            </QuickValuesWrapper>
+            <QuickValuesWrapper>
+              <QuickValueButton onClick={() => setRepsBeingAdded(50)}>
+                50
+              </QuickValueButton>
+              <QuickValueButton onClick={() => setRepsBeingAdded(60)}>
+                60
+              </QuickValueButton>
+            </QuickValuesWrapper>
+            <QuickValuesWrapper>
+              <QuickValueButton onClick={() => setRepsBeingAdded(70)}>
+                70
+              </QuickValueButton>
+              <QuickValueButton onClick={() => setRepsBeingAdded(80)}>
+                80
+              </QuickValueButton>
+            </QuickValuesWrapper>
+            <QuickValuesWrapper>
+              <QuickValueButton onClick={() => setRepsBeingAdded(90)}>
+                90
+              </QuickValueButton>
+              <QuickValueButton onClick={() => setRepsBeingAdded(100)}>
+                100
+              </QuickValueButton>
             </QuickValuesWrapper>
             <hr />
             <SaveButton onClick={() => save()}>Save</SaveButton>
