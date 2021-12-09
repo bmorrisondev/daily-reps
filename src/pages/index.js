@@ -65,12 +65,12 @@ const IndexPage = () => {
       // get workouts
       let res = await fetch("/.netlify/functions/workouts")
       let json = await res.json()
+      json = json.filter(w => !w.isArchived)
       setWorkouts(json)
 
       let res2 = await fetch("/.netlify/functions/reps")
       let json2 = await res2.json()
       let midnight = new Date().setHours(0, 0, 0, 0)
-      console.log(midnight)
       json2 = json2.filter(r => r.added > midnight)
 
       setReps(json2)
@@ -127,7 +127,6 @@ const IndexPage = () => {
       body: JSON.stringify(body),
     })
     let newWorkout = await res.json()
-    console.log(newWorkout)
 
     let _workouts = workouts
     workouts.push(newWorkout)
