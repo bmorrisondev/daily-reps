@@ -70,7 +70,8 @@ const IndexPage = () => {
       let res2 = await fetch("/.netlify/functions/reps")
       let json2 = await res2.json()
       let midnight = new Date().setHours(0, 0, 0, 0)
-      json2.filter(r => r.added > midnight)
+      console.log(midnight)
+      json2 = json2.filter(r => r.added > midnight)
 
       setReps(json2)
     }
