@@ -20,5 +20,16 @@ exports.handler = async (event, context) => {
     response.body = JSON.stringify(created)
   }
 
+  if (method === "DELETE") {
+    let workoutBeingDeleted = JSON.parse(event.body)
+    let workout = await service.getRecordById(
+      "workouts",
+      workoutBeingDeleted.id
+    )
+    workout.isArchived = true
+    await service.updateRecord("workouts", workoutBeingDeleted.id, workout)
+    response.statusCode = 200
+  }
+
   return response
 }
