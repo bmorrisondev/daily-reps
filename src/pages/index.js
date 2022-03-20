@@ -7,7 +7,33 @@ import Layout from "../components/layout"
 const MyButton = styled(Button)`
   margin: 10px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+
+  .btn-main {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+`
+
+const ProgressBar = styled.div`
+  height: 10px;
+  width: 100%;
+  background-color: #49246e;
+  border-radius: 5px;
+  position: relative;
+
+  .progress {
+    height: 10px;
+    background-color: #3bd16f;
+    width: ${props =>
+      props.reps / props.targetReps > 1
+        ? 100
+        : (props.reps / props.targetReps) * 100}%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 `
 
 const Section = styled.section`
@@ -59,6 +85,7 @@ const IndexPage = () => {
   const [repsBeingAdded, setRepsBeingAdded] = useState(10)
   const [isAddingWorkout, setIsAddingWorkout] = useState(false)
   const [workoutBeingAdded, setWorkoutBeingAdded] = useState("")
+  const [workoutBeingEdited, setWorkoutBeingEdited] = useState("")
 
   useEffect(() => {
     async function init() {
@@ -150,9 +177,20 @@ const IndexPage = () => {
         <div className="row">
           {workouts.map((el, idx) => (
             <MyButton key={idx} onClick={() => openDialog(el)}>
-              <span>{el.name}</span>
-              {getRepsForWorkout(el.id) > 0 && (
-                <span>{getRepsForWorkout(el.id)}</span>
+              <div className="btn-main">
+                <span>{el.name}</span>
+                {getRepsForWorkout(el.id) > 0 && (
+                  <span>{getRepsForWorkout(el.id)}</span>
+                )}
+              </div>
+              {el.targetReps && (
+                <ProgressBar
+                  reps={getRepsForWorkout(el.id)}
+                  targetReps={el.targetReps}
+                >
+                  &nbsp;
+                  <div className="progress">&nbsp;</div>
+                </ProgressBar>
               )}
             </MyButton>
           ))}
@@ -165,7 +203,12 @@ const IndexPage = () => {
 
       <Modal show={isModalDisplayed} fullscreen onHide={onHideModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Reps ({selectedWorkout.name})</Modal.Title>
+          <Modal.Title>
+            Add Reps ({selectedWorkout.name}){" "}
+            {selectedWorkout.targetReps && (
+              <span>Target: {selectedWorkout.targetReps}</span>
+            )}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <AddRepsWrapper>
